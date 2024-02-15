@@ -22,6 +22,7 @@ class CustomAppBar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: AppBar(
+        backgroundColor: Colors.transparent,
         automaticallyImplyLeading: false,
         leading: showBackArrow
             ? IconButton(
@@ -31,7 +32,7 @@ class CustomAppBar extends StatelessWidget {
                 icon: SvgPicture.asset(
                   'images/icons/arrow_left.svg',
                   width: 27,
-                  color: Colors.blue,
+                  color: Colors.white,
                 ),
               )
             : leadingIcon != null

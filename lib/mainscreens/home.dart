@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kobby_store/common/widgets/curved_edged_widget.dart';
 import 'package:kobby_store/common/widgets/home_app_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,10 +13,18 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Column(
-        children: [
-          HomeAppBar(),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            CurvedWidgetCard(
+              child: Column(
+                children: [
+                  HomeAppBar(),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

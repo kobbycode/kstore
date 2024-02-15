@@ -17,9 +17,9 @@ class HomeAppBar extends StatelessWidget {
           Text(
             'Hello, you are welcome back',
             style: GoogleFonts.fredoka(
-              fontSize: 14,
+              fontSize: 15,
               fontWeight: FontWeight.w500,
-              color: Colors.grey.shade600,
+              color: const Color(0XFFFAFEFF).withOpacity(0.9),
             ),
           ),
           const SizedBox(height: 3),
@@ -27,7 +27,8 @@ class HomeAppBar extends StatelessWidget {
             'Alex Ofori',
             style: GoogleFonts.fredoka(
               fontSize: 24,
-              color: Colors.grey.shade800,
+              color: const Color(0XFFFAFEFF),
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
@@ -36,6 +37,7 @@ class HomeAppBar extends StatelessWidget {
         CustomCartItem(
           onPress: () {},
           iconSize: 21,
+          color: const Color(0XFFFAFEFF),
         ),
       ],
     );
