@@ -31,7 +31,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
-  flutter_svg: 
+  flutter_svg: null
+  google_fonts: ^6.1.0
 
 dev_dependencies:
   flutter_lints: ^2.0.0

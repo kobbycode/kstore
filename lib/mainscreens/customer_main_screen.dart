@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:kobby_store/mainscreens/home.dart';
 
 class CustomerMainScreen extends StatefulWidget {
   const CustomerMainScreen({Key? key}) : super(key: key);
@@ -89,17 +90,6 @@ class _CustomerMainScreenState extends State<CustomerMainScreen> {
       const CartPage(),
       const ProfilePage(),
     ];
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Home Page'),
-    );
   }
 }
 
