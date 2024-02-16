@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:kobby_store/common/images/category_image.dart';
+import 'package:kobby_store/common/widgets/category_vertical_image_text.dart';
 import 'package:kobby_store/common/widgets/curved_edged_widget.dart';
 import 'package:kobby_store/common/widgets/home_app_bar.dart';
-import 'package:kobby_store/common/widgets/home_categories.dart';
 import 'package:kobby_store/common/widgets/search_container.dart';
 import 'package:kobby_store/common/widgets/section_header.dart';
 
@@ -59,11 +60,25 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(
                           height: 80,
                           child: ListView.builder(
-                              itemCount: 6,
+                              itemCount: categories.length,
                               shrinkWrap: true,
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (_, index) {
-                                return const HomeCategories();
+                                final category = categories[index];
+
+                                return ImageVerticalText(
+                                  image: category['image'] as String,
+                                  title: category['title'] as String,
+                                  textColor:
+                                      const Color(0XFFFAFEFF).withOpacity(0.9),
+                                  onTap: () {
+                                    // Navigate to the specified route
+                                    Navigator.pushNamed(
+                                      context,
+                                      category['route'] as String,
+                                    );
+                                  },
+                                );
                               }),
                         ),
                       ],

@@ -28,20 +28,23 @@ class ImageVerticalText extends StatelessWidget {
               theChild: Image.asset(
                 image,
                 fit: BoxFit.cover,
-                width: 36,
+                width: 48,
               ),
             ),
             const SizedBox(height: 3),
             SizedBox(
               width: 55,
-              child: Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.fredoka(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: textColor),
+              child: Center(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.fredoka(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                  ),
+                ),
               ),
             ),
           ],
