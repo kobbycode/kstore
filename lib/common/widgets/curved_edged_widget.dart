@@ -13,7 +13,7 @@ class CurvedWidgetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomCurvedEdgeCard(
       child: Container(
-        color: const Color.fromARGB(255, 72, 162, 211),
+        color: const Color.fromARGB(255, 28, 146, 155),
         padding: const EdgeInsets.all(0),
         child: SizedBox(
           height: 400,
@@ -29,8 +29,26 @@ class CurvedWidgetCard extends StatelessWidget {
                 ),
               ),
               Positioned(
+                top: -150,
+                right: -250,
+                child: CircularContainer(
+                  color: const Color(
+                    0XFFFAFEFF,
+                  ).withOpacity(0.1),
+                ),
+              ),
+              Positioned(
                 top: -100,
                 right: 300,
+                child: CircularContainer(
+                  color: const Color(
+                    0XFFFAFEFF,
+                  ).withOpacity(0.1),
+                ),
+              ),
+              Positioned(
+                top: 100,
+                right: -300,
                 child: CircularContainer(
                   color: const Color(
                     0XFFFAFEFF,

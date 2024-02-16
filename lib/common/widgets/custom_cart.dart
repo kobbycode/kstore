@@ -33,7 +33,7 @@ class CustomCartItem extends StatelessWidget {
             width: 18,
             height: 18,
             decoration: BoxDecoration(
-              color: const Color(0XFF24697E),
+              color: const Color.fromARGB(255, 36, 72, 126),
               borderRadius: BorderRadius.circular(100),
             ),
             child: Center(
