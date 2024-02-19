@@ -25,7 +25,12 @@ class ImageVerticalText extends StatelessWidget {
             FrostedGlassBox(
               theWidth: 56,
               theHeight: 56,
-              theChild: Image.asset(
+              gradientColors: const [
+                Colors.white,
+                Colors.white,
+              ],
+              borderColor: Colors.white,
+              child: Image.asset(
                 image,
                 fit: BoxFit.cover,
                 width: 48,

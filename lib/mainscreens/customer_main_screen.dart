@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:kobby_store/mainscreens/categories_page.dart';
 import 'package:kobby_store/mainscreens/home.dart';
 
 class CustomerMainScreen extends StatefulWidget {
@@ -23,17 +25,21 @@ class _CustomerMainScreenState extends State<CustomerMainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade100,
       body: IndexedStack(
         index: _selectedIndex,
         children: _buildPages(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: const Color(0XFF24697E),
-        unselectedItemColor: Colors.grey, //
+        unselectedItemColor: Colors.grey,
         currentIndex: _selectedIndex,
-        selectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.w400,
+        selectedLabelStyle: GoogleFonts.fredoka(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: const Color.fromARGB(255, 36, 72, 126),
         ),
+        type: BottomNavigationBarType.fixed,
         elevation: 0,
         items: [
           _buildBottomNavigationBarItem(
@@ -73,7 +79,7 @@ class _CustomerMainScreenState extends State<CustomerMainScreen> {
     return BottomNavigationBarItem(
       icon: SvgPicture.asset(
         iconPath,
-        width: 25,
+        width: 23,
         color: _selectedIndex == _pageLabels.indexOf(label)
             ? const Color(0XFF24697E)
             : Colors.grey,
@@ -90,17 +96,6 @@ class _CustomerMainScreenState extends State<CustomerMainScreen> {
       const CartPage(),
       const ProfilePage(),
     ];
-  }
-}
-
-class CategoriesPage extends StatelessWidget {
-  const CategoriesPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Categories Page'),
-    );
   }
 }
 

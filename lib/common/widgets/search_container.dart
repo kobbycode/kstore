@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kobby_store/mainscreens/search_screen.dart';
 
 class CustomSearchContainer extends StatelessWidget {
   final String text;
   final Widget? icon;
+  final double? horizontalPadding;
   final bool showBackground, showBorder;
-  final void Function()? onTap;
+  // final void Function()? onTap;
 
   const CustomSearchContainer({
     Key? key,
@@ -13,23 +15,31 @@ class CustomSearchContainer extends StatelessWidget {
     this.icon,
     this.showBackground = true,
     this.showBorder = true,
-    this.onTap,
+    this.horizontalPadding = 24.0,
+    // this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SearchScreen(),
+          ),
+        );
+      },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding!),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(5),
             border: showBorder
                 ? Border.all(
-                    color: const Color(0XFFFAFEFF),
+                    color: const Color.fromARGB(255, 28, 146, 155),
                   )
                 : null,
             color:

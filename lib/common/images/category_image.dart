@@ -30,3 +30,18 @@ final List<Map<String, dynamic>> categories = [
     'route': '/homeOffice',
   },
 ];
+
+List<ItemData> categoryList = [
+  ItemData(text: 'Electronics'),
+  ItemData(text: 'Appliances'),
+  ItemData(text: 'Computing'),
+  ItemData(text: 'Gaming'),
+  ItemData(text: 'Health & Beauty'),
+  ItemData(text: 'Home & Office'),
+];
+
+class ItemData {
+  String text;
+  bool isSelected;
+  ItemData({required this.text, this.isSelected = false});
+}

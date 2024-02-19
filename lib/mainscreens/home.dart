@@ -32,7 +32,6 @@ class _HomePageState extends State<HomePage> {
 
                   //Search Box
                   CustomSearchContainer(
-                    onTap: () {},
                     text: 'Search',
                     icon: SvgPicture.asset(
                       'images/icons/search.svg',
