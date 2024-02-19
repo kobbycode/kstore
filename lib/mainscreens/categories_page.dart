@@ -12,6 +12,20 @@ class CategoriesPage extends StatefulWidget {
 }
 
 class _CategoriesPageState extends State<CategoriesPage> {
+  final PageController _pageController = PageController();
+
+  @override
+  void initState() {
+    // Make the first category selected after moving to other page and back
+    for (var e in categoryList) {
+      e.isSelected = false;
+    }
+    setState(() {
+      categoryList[0].isSelected = true;
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -57,17 +71,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              setState(() {
-                for (var e in categoryList) {
-                  e.isSelected = false;
-                }
-                categoryList[index].isSelected = true;
-              });
+              _pageController.animateToPage(index,
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.bounceInOut);
             },
             child: Container(
               height: 100,
               margin: const EdgeInsets.symmetric(
-                vertical: 10,
+                vertical: 3,
               ),
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
@@ -114,6 +125,38 @@ class _CategoriesPageState extends State<CategoriesPage> {
       height: size.height * 0.9,
       width: size.width * 0.72,
       color: Colors.white,
+      child: PageView(
+        controller: _pageController,
+        onPageChanged: (value) {
+          for (var e in categoryList) {
+            e.isSelected = false;
+          }
+          setState(() {
+            categoryList[value].isSelected = true;
+          });
+        },
+        scrollDirection: Axis.vertical,
+        children: const [
+          Center(
+            child: Text('Electronics'),
+          ),
+          Center(
+            child: Text('Appliances'),
+          ),
+          Center(
+            child: Text('Computing'),
+          ),
+          Center(
+            child: Text('Gaming'),
+          ),
+          Center(
+            child: Text('Home & Beauty'),
+          ),
+          Center(
+            child: Text('Home & Office'),
+          ),
+        ],
+      ),
     );
   }
 }
