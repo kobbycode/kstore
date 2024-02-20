@@ -87,16 +87,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   bottomRight: Radius.circular(10),
                 ),
                 color: categoryList[index].isSelected == true
-                    ? Colors.white
+                    ? Colors.grey[200]
                     : const Color.fromARGB(255, 79, 194, 127).withOpacity(0.2),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 79, 167, 194)
-                        .withOpacity(0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
               child: Center(
                 child: Padding(

@@ -8,18 +8,18 @@ List<String> mainCategory = [
 ];
 
 List<String> electronics = [
-  'Digital Clock',
-  'Wireless Speaker',
+  'Digital Clocks',
+  'Wireless Speakers',
   'TV',
-  'projectors',
+  'Projectors',
   'TV Box',
   'DVD Players',
-  'phone',
-  'cables',
-  'Home Theatre',
+  'Phones',
+  'Cables',
+  'Home Theatres',
   'Bluetooth Speakers',
-  'audio interface',
-  'other',
+  'Audio Cards',
+  'More',
 ];
 
 List<String> appliances = [

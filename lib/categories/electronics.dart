@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kobby_store/categories/electronics_sub_category_screen.dart';
 import 'package:kobby_store/common/widgets/frosted_glass.dart';
 import 'package:kobby_store/utilities/utilities.dart';
 
@@ -33,34 +34,47 @@ class ElectronicsPage extends StatelessWidget {
               children: List.generate(
                 electronics.length,
                 (index) {
-                  return Column(
-                    children: [
-                      FrostedGlassBox(
-                        theWidth: 100,
-                        theHeight: 100,
-                        gradientColors: const [
-                          Color.fromRGBO(140, 194, 79, 1),
-                          Color.fromARGB(255, 79, 167, 194),
-                        ],
-                        borderColor: const Color.fromARGB(255, 79, 167, 194),
-                        child: Image.asset(
-                          'images/electronics/electronics$index.jpg',
-                          height: 85,
-                          fit: BoxFit.cover,
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ElectronicsSubCategoriesScreen(
+                            title: electronics[index],
+                            mainCategory: 'Electronics',
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        electronics[index],
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.fredoka(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.blueGrey,
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        FrostedGlassBox(
+                          theWidth: 100,
+                          theHeight: 100,
+                          gradientColors: const [
+                            Color.fromRGBO(140, 194, 79, 1),
+                            Color.fromARGB(255, 79, 167, 194),
+                          ],
+                          borderColor: const Color.fromARGB(255, 79, 167, 194),
+                          child: Image.asset(
+                            'images/electronics/electronics$index.jpg',
+                            height: 85,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 5),
+                        Text(
+                          electronics[index],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.fredoka(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.blueGrey,
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),
