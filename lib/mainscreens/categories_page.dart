@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kobby_store/categories/electronics.dart';
 import 'package:kobby_store/common/images/category_image.dart';
 import 'package:kobby_store/common/widgets/search_container.dart';
 
@@ -64,7 +65,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
   Widget sideBar(Size size) {
     return SizedBox(
-      width: size.width * 0.28,
+      width: size.width * 0.2,
       height: size.height * 0.8,
       child: ListView.builder(
         itemCount: categoryList.length,
@@ -87,7 +88,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 ),
                 color: categoryList[index].isSelected == true
                     ? Colors.white
-                    : const Color.fromARGB(255, 79, 167, 194).withOpacity(0.2),
+                    : const Color.fromARGB(255, 79, 194, 127).withOpacity(0.2),
                 boxShadow: [
                   BoxShadow(
                     color: const Color.fromARGB(255, 79, 167, 194)
@@ -105,7 +106,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     style: GoogleFonts.fredoka(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: const Color.fromARGB(255, 79, 167, 194),
+                      color: Colors.blueGrey,
                       letterSpacing: 0.8,
                     ),
                     maxLines: 1,
@@ -123,7 +124,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   Widget categoryWidget(Size size) {
     return Container(
       height: size.height * 0.9,
-      width: size.width * 0.72,
+      width: size.width * 0.8,
       color: Colors.white,
       child: PageView(
         controller: _pageController,
@@ -137,9 +138,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
         },
         scrollDirection: Axis.vertical,
         children: const [
-          Center(
-            child: Text('Electronics'),
-          ),
+          ElectronicsPage(),
           Center(
             child: Text('Appliances'),
           ),
