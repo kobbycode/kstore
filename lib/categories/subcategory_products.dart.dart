@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class ElectronicsSubCategoriesScreen extends StatelessWidget {
+class SubCategoryProducts extends StatelessWidget {
   final String mainCategory;
   final String title;
-  const ElectronicsSubCategoriesScreen(
+  const SubCategoryProducts(
       {super.key, required this.title, required this.mainCategory});
 
   @override

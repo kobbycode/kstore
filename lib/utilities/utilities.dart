@@ -1,10 +1,10 @@
 List<String> mainCategory = [
-  'electronics',
-  'appliances',
-  'health & beauty',
-  'home & office',
-  'computing',
-  'gaming',
+  'Electronics',
+  'Appliance',
+  'Health & Beauty',
+  'Home & Office',
+  'Computing',
+  'Gaming',
 ];
 
 List<String> electronics = [
@@ -23,6 +23,7 @@ List<String> electronics = [
 ];
 
 List<String> appliances = [
+  'Fruit Juicer',
   'Fridge',
   'Microwave',
   'Standing Fun',
@@ -35,6 +36,7 @@ List<String> appliances = [
 ];
 
 List<String> healthBeauty = [
+  'Body Lotion',
   'Men',
   'Women',
   'Fragrance',
@@ -51,6 +53,7 @@ List<String> healthBeauty = [
 
 List<String> homeOffice = [
   'Storage',
+  'Iron & Steamers',
   'Decorations',
   'Bedsheets',
   'Pillows',
@@ -65,22 +68,23 @@ List<String> homeOffice = [
 
 List<String> computing = [
   'PC',
-  'Laptop Bag',
-  'Flash Drives',
   'Printers',
+  'Laptop Bag',
   'Routers',
   'Laptop chargers',
   'Computer Mouse',
   'Laptop Stand',
-  'Sound Card',
+  'Sound Cards',
   'External Drives',
+  'Flash Drives',
   'other',
 ];
 
 List<String> gaming = [
+  'Controllers',
   'PS5',
   'PS4',
-  'XBOX ONE',
+  'XBOX ONE Controller',
   'PSP',
   'Other',
 ];
