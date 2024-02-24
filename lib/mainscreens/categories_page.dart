@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kobby_store/categories/electronics.dart';
-import 'package:kobby_store/common/images/category_image.dart';
 import 'package:kobby_store/common/widgets/search_container.dart';
 import 'package:kobby_store/mainscreens/appliances_screen.dart';
 import 'package:kobby_store/mainscreens/computing_screen.dart';
@@ -135,7 +133,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   elevation: 0,
                   highlightElevation: 0,
                   backgroundColor: Colors.transparent,
-                  child: SvgPicture.asset('images/icons/arrowDown.svg'),
+                  child: SvgPicture.asset(
+                    'images/icons/arrowDown.svg',
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -180,7 +181,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     style: GoogleFonts.fredoka(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: Colors.blueGrey,
+                      color: Colors.blueGrey.shade500,
                       letterSpacing: 0.8,
                     ),
                     maxLines: 1,

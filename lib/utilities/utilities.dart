@@ -23,16 +23,16 @@ List<String> electronics = [
 ];
 
 List<String> appliances = [
-  'Fruit Juicer',
-  'Fridge',
-  'Microwave',
+  'Fruit Juicers',
+  'Refrigerators',
+  'Microwaves',
   'Standing Fun',
-  'Rice Cooker',
-  'Washing Machine',
+  'Rice Cookers',
+  'Washing Machines',
   'Iron',
-  'Whisker',
-  'Blender',
-  'other',
+  'Whiskers',
+  'Blenders',
+  'More',
 ];
 
 List<String> healthBeauty = [
@@ -42,13 +42,13 @@ List<String> healthBeauty = [
   'Fragrance',
   'Antiseptics',
   'Hair Straighteners',
-  'Body Lotion',
+  'Make UP',
   'Roll On',
   'Tooth Paste',
   'Hair Trimmer',
   'Bathing Soap',
   'kids',
-  'other',
+  'More',
 ];
 
 List<String> homeOffice = [
@@ -63,7 +63,7 @@ List<String> homeOffice = [
   'Air Fresheners',
   'Napkins',
   'Towels',
-  'other',
+  'More',
 ];
 
 List<String> computing = [
@@ -77,7 +77,7 @@ List<String> computing = [
   'Sound Cards',
   'External Drives',
   'Flash Drives',
-  'other',
+  'More',
 ];
 
 List<String> gaming = [
@@ -86,5 +86,5 @@ List<String> gaming = [
   'PS4',
   'XBOX ONE Controller',
   'PSP',
-  'Other',
+  'More',
 ];

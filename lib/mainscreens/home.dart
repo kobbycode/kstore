@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:kobby_store/common/images/category_image.dart';
+import 'package:kobby_store/common/widgets/carousel_slider.dart';
 import 'package:kobby_store/common/widgets/category_vertical_image_text.dart';
 import 'package:kobby_store/common/widgets/curved_edged_widget.dart';
 import 'package:kobby_store/common/widgets/home_app_bar.dart';
@@ -85,7 +86,11 @@ class _HomePageState extends State<HomePage> {
                   )
                 ],
               ),
-            )
+            ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: PromoCarousel(),
+            ),
           ],
         ),
       ),
