@@ -46,3 +46,13 @@ Product galleries have thumbnail selection, previous/next navigation and an acce
 The phone and Bekia shoe use inspected reference image sets (3 and 7 photos). Other illustrative products have a full photo plus a labeled crop of that same photo; these are not claimed as different camera angles. Remote image loading has a viewer error/retry state.
 
 Generated brand asset: dist/assets/kstore-logo.png. A matching simplified vector mark is used as favicon. The logo was generated with the built-in image-generation tool. The full prompt is retained in BRAND.md.
+
+## Sell on Kstore
+
+Routes: /#/sell (seller landing), /#/seller/onboarding (guided setup), /#/seller (dashboard), products/orders/finance/learning/settings subpages, and /#/seller/store/{id} (storefront).
+
+Onboarding saves progress and activates a clearly labeled demo store after guideline acknowledgment. Sellers can create, edit, draft, publish, pause and archive products, with up to six photos (HTTPS URLs or resized uploads), unique variations, whole-number inventory and validated pricing/SKUs. Published listings appear in the same-browser catalog and search, use the product gallery, and can be purchased through demo checkout. Seller inventory is reduced after order creation and restored after buyer cancellation.
+
+Seller center shows scoped order lines, fulfillment updates (packed/shipped/simulated delivered), demo return approval, downloadable packing slips, sample finance calculations and CSV export. Mixed-cart seller fulfillment is scoped to seller lines instead of marking unrelated merchandise delivered. Store settings and seller guides are included. Sample commission is 5%, explicitly not a production fee agreement.
+
+The existing static demo supports one browser-local store owned by its demo profile email. It does not submit a real merchant application, verify documents, connect a bank account, share listings across devices, make payouts, book carriers or send messages. Those require authenticated server services and operational integrations. Uploaded product photos live in localStorage; storage limits are reported.
