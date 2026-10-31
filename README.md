@@ -56,3 +56,7 @@ Onboarding saves progress and activates a clearly labeled demo store after guide
 Seller center shows scoped order lines, fulfillment updates (packed/shipped/simulated delivered), demo return approval, downloadable packing slips, sample finance calculations and CSV export. Mixed-cart seller fulfillment is scoped to seller lines instead of marking unrelated merchandise delivered. Store settings and seller guides are included. Sample commission is 5%, explicitly not a production fee agreement.
 
 The existing static demo supports one browser-local store owned by its demo profile email. It does not submit a real merchant application, verify documents, connect a bank account, share listings across devices, make payouts, book carriers or send messages. Those require authenticated server services and operational integrations. Uploaded product photos live in localStorage; storage limits are reported.
+
+## Firebase integration
+
+A project-configurable Firebase Auth/Firestore/Storage/Functions foundation is prepared. See firebase/README.md for setup, permissions, operator actions, tests and current connection status. dist/firebase-config.js remains null until the intended project is supplied and its backend is deployed. This preserves the existing demo instead of presenting a disconnected login as working authentication.

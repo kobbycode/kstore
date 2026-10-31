@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function owns(uid) { return signedIn() && request.auth.uid == uid; }
+    function admin() { return signedIn() && request.auth.token.admin == true; }
+    match /profiles/{uid} {
+      allow read: if owns(uid) || admin();
+      allow create, update: if owns(uid)
+        && request.resource.data.keys().hasOnly(['name','newsletter','updatedAt'])
+        && request.resource.data.name is string && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 70
+        && request.resource.data.newsletter is bool
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+    match /accounts/{uid} {
+      allow read: if owns(uid);
+      allow create, update: if owns(uid)
+        && request.resource.data.keys().hasOnly(['cart','wishlist','addresses','pickups','followed','delivery','addressId','station','payment','updatedAt'])
+        && request.resource.data.cart is list && request.resource.data.cart.size() <= 30
+        && request.resource.data.wishlist is list && request.resource.data.wishlist.size() <= 200
+        && request.resource.data.addresses is list && request.resource.data.addresses.size() <= 30
+        && request.resource.data.pickups is list && request.resource.data.pickups.size() <= 30
+        && request.resource.data.followed is list && request.resource.data.followed.size() <= 100
+        && request.resource.data.delivery in ['door','pickup']
+        && request.resource.data.addressId is string && request.resource.data.station is string
+        && request.resource.data.payment is string && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+    match /stores/{uid} {
+      allow read: if owns(uid) || admin();
+      // Callable functions enforce ownership, validation and approval immutability.
+      allow write: if false;
+    }
+    match /publicStores/{uid} {
+      allow read: if resource.data.verificationStatus == 'approved' || owns(uid) || admin();
+      allow write: if false;
+    }
+    match /listings/{id} {
+      allow read: if resource.data.status == 'active'
+        || (signedIn() && resource.data.sellerId == request.auth.uid) || admin();
+      allow write: if false;
+    }
+    match /orders/{id} {
+      allow read: if signedIn() && (resource.data.buyerId == request.auth.uid || admin());
+      // Prices, stock, participants and payment status are server-owned.
+      allow write: if false;
+      match /events/{eventId} { allow read, write: if false; }
+    }
+    match /sellerOrders/{uid}/orders/{id} { allow read: if owns(uid) || admin(); allow write: if false; }
+    match /pickupStations/{id} { allow read: if resource.data.active == true; allow write: if false; }
+    match /reviews/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

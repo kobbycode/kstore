@@ -7,3 +7,12 @@ qa-results.json
 !dist/assets/*.png
 gallery-qa-results.json
 seller-qa-results.json
+
+.env
+.env.*
+!.env.example
+*service-account*.json
+firebase/.firebaserc
+firebase/*-debug.log
+firebase/functions/node_modules/
+firebase/node_modules/

@@ -1,0 +1,9 @@
+// Run with trusted operator Application Default Credentials. No browser can invoke this tool.
+import {initializeApp} from 'firebase-admin/app';
+import {getFirestore} from 'firebase-admin/firestore';
+import {getAuth} from 'firebase-admin/auth';
+const [action,projectId,value,...args]=process.argv.slice(2);if(!projectId)throw Error('Usage: node tools/manage.mjs <approve-seller|grant-admin|set-commerce> <projectId> <uid or value>');initializeApp({projectId});const db=getFirestore();
+if(action==='approve-seller'){const ref=db.doc('stores/'+value);await db.runTransaction(async tx=>{const snap=await tx.get(ref);if(!snap.exists)throw Error('Seller does not exist.');tx.update(ref,{verificationStatus:'approved'});tx.update(db.doc('publicStores/'+value),{verificationStatus:'approved'})});console.log('Seller approved.');}
+else if(action==='grant-admin'){const user=await getAuth().getUser(value);await getAuth().setCustomUserClaims(value,{...user.customClaims,admin:true});console.log('Admin claim granted. User must refresh their ID token.');}
+else if(action==='set-commerce'){if(value!=='--enable-cod')throw Error('Use --enable-cod and explicitly provide door/pickup fees in pesewas and supported regions.');const [door,pickup,...regions]=args;const doorFeeCents=Number(door),pickupFeeCents=Number(pickup);if(!Number.isInteger(doorFeeCents)||doorFeeCents<0||!Number.isInteger(pickupFeeCents)||pickupFeeCents<0||!regions.length)throw Error('Invalid fees or regions.');await db.doc('commerce/settings').set({checkoutEnabled:true,currency:'GHS',doorFeeCents,pickupFeeCents,regions});console.log('Pay-on-delivery checkout configured.');}
+else throw Error('Unknown operation.');
