@@ -38,3 +38,11 @@ Before live commerce: add authenticated server persistence, ownership checks, ca
 20 connected browser checks passed during development: variant add, quantity arithmetic, checkout sign-in, delivery gate, saved address, payment step, invalid/valid voucher, discount arithmetic, selected MTN method, acknowledgment gate, one order with empty cart, demo delivery, return request, pickup filters/persistence, unavailable sizes, dialog opening, wishlist, empty search and price sort. Local QA output is retained in qa-results.json (not deployed). A 390-pixel mobile view had matching viewport/document widths and no failed product images in the captured homepage.
 
 Images use remote Unsplash photo URLs, with Google Fonts for typography. A live catalog should replace illustrative product photos and sample specifications with licensed accurate assets.
+
+## Product gallery and logo update
+
+Product galleries have thumbnail selection, previous/next navigation and an accessible viewport-filling dialog. The viewer supports 100–400% zoom, reset, wheel zoom, double-click, drag pan, pinch zoom, mobile swipe, keyboard arrows/Home/End/+/-/0, and optional browser fullscreen. Escape closes and restores focus. Size variants remain separate from image selection and have per-variant demo stock limits.
+
+The phone and Bekia shoe use inspected reference image sets (3 and 7 photos). Other illustrative products have a full photo plus a labeled crop of that same photo; these are not claimed as different camera angles. Remote image loading has a viewer error/retry state.
+
+Generated brand asset: dist/assets/kstore-logo.png. A matching simplified vector mark is used as favicon. The logo was generated with the built-in image-generation tool. The full prompt is retained in BRAND.md.

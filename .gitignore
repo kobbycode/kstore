@@ -3,3 +3,6 @@ node_modules/
 *.tar
 *.png
 qa-results.json
+!dist/assets/
+!dist/assets/*.png
+gallery-qa-results.json
