@@ -2,6 +2,14 @@
 
 Responsive, dependency-free shopping storefront based on the inspected reference flows, with original Kstore branding.
 
+## Connected marketplace — 3 November 2026
+
+The frontend now uses the existing `kstore-d3bb3` Firebase project for email/password authentication, private profiles and addresses, approved catalog listings, seller applications and server-validated callable operations. Its deployed backend has eight active functions. Checkout remains disabled until separately configured by the operator; online payments, delivery confirmation, refunds, payouts and support messaging are not connected. Existing browser-local demo records are not imported.
+
+Twelve browser checks passed against local Auth/Firestore/Functions/Storage emulators, including registration, verification refresh, profile/address persistence, reset-password sign-in, sign-out and mobile layout. Twenty-five backend checks also passed. A signed-out browser check against the real project's public queries passed without creating users or orders; the catalog is currently empty. Actual verification/reset email delivery and signed-in cloud transactions still need validation with a real account.
+
+Connected mode uses backend pickup stations and quotes, and removes sample vouchers, fixed delivery fees and unsupported payment claims. The demo-flow inventory below describes the retained local-demo implementation when configuration is null; it does not describe active connected-mode behavior.
+
 ## Run locally
 
 Requires Node.js 18+.

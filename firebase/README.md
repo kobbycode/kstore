@@ -1,10 +1,10 @@
 # Firebase connection guide
 
-Status: integration prepared; no Firebase project is configured or deployed yet. Existing hosted Kstore remains a browser-local demo while dist/firebase-config.js is null.
+Status (3 November 2026): backend deployed to `kstore-d3bb3`. All eight callables are ACTIVE and reject signed-out calls; released Firestore/Storage rules match local source and indexes are deployed. Frontend activation now sets the public project configuration with emulators disabled. Email/password authentication is enabled and the existing Site domain is authorized. Twelve emulator browser checks and a read-only real-project guest check passed. Publication uses the existing owner-private Site. Checkout settings, seller approvals and operational services remain separate.
 
 ## Required project inputs
 
-Provide the Firebase project ID and public web-app configuration: apiKey, authDomain, projectId, storageBucket, messagingSenderId and appId. Never paste a service-account private key. If there is no project yet, create one in Firebase Console first. Do not upgrade billing automatically: review Cloud Functions/Storage requirements in your own Firebase account.
+The existing project's public web configuration is recorded in `web-config.json`. Preserve its default Firestore database in `nam5` and existing Storage bucket. The following checklist is for integration; project creation and backend deployment are already complete. Never paste a service-account private key or change billing automatically.
 
 1. Register a Web app in Firebase Console. Copy its public config into dist/firebase-config.js.
 2. Enable Authentication → Email/Password. Add kstore-ghana-shop.vivid-morel-1647.chatgpt.site and localhost to authorized domains. Configure verification and password-reset templates.
@@ -39,7 +39,8 @@ The last command intentionally requires explicit fees and regions. Checkout star
 
 - Run node --test tests/domain.test.mjs: cart aggregation, amount validation, stock limits and server-price arithmetic.
 - Firestore rules tests: install this directory’s dev dependencies and Firebase CLI; install the Java version required by the current Firestore emulator. Run npm run test:rules. The test suite uses demo-kstore and does not contact production.
+- Run `npm run test:integration` for Auth, Functions, Firestore and Storage authorization/transaction tests. This requires Java 21 and local Node/Firebase CLI. Tests enforce loopback emulator hosts, seed synthetic records only in `demo-kstore`, and use real emulator sign-in tokens over the callable HTTP protocol. Test files run sequentially to keep Firestore resets isolated.
 - Local emulators: firebase emulators:start --project demo-kstore. Set public config for that demo project and KSTORE_FIREBASE_EMULATORS=true only on localhost.
 - Validate sign-up, verification, sign-in, reset, sign-out, a second user’s denial, two-device data, pending seller approval, competing final-stock purchases, retrying the same checkout key, and order cancellation restoring stock before enabling real orders.
 
-Current environment: domain tests pass; scripts pass syntax checks. Emulator access tests and live Firebase calls have not run because no project configuration has been supplied and Java is unavailable. Do not treat syntax tests as proof of deployed authorization.
+Current environment: Java 21 is installed. All 25 local backend checks passed. Tests found and fixed seller submission and cancellation inventory-version bugs; both fixes are deployed. Live signed-out callable probes and released-rules comparisons passed. Twelve browser checks passed against local emulators; a real-project read-only guest/catalog/auth-page check passed. Local Functions ran on Node 24 versus deployed Node 22. Actual email delivery and authenticated production transactions remain unverified. Frontend source now uses the real public configuration with emulators disabled.

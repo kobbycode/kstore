@@ -1,0 +1,6 @@
+# These optional postinstall hooks are unnecessary for the server runtime:
+# util generates web-app configuration; protobufjs checks dependency versions.
+# Record explicit decisions so pnpm's strict dependency-build check can pass.
+allowBuilds:
+  '@firebase/util@1.15.3': false
+  'protobufjs@7.6.6': false
