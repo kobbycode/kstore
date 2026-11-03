@@ -12,6 +12,8 @@ Connected mode uses backend pickup stations and quotes, and removes sample vouch
 
 Seller follow-up: twelve browser scenarios passed for resumable applications, explicit final consent, pending publication denial, private drafts, approved publication, pausing, archiving, preserving archived status during edits, and unconfigured finance states. Applications stay drafts until explicit submission with the required acknowledgments. Connected finances show order merchandise value without inventing commission rates or payable balances. Owner signup and email verification were confirmed by the user; the verification message landed in spam.
 
+Email-verification recovery refreshes account data and ID-token claims before verified seller/order actions, and refreshes unverified sessions when returning to the page. Six browser regression checks cover a verified account with an older unverified token, successful seller draft save after refresh, preserved unverified-user gating and no unsolicited email. Submitting an application does not send verification mail; the explicit verification-email control does.
+
 ## Run locally
 
 Requires Node.js 18+.
