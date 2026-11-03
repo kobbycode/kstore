@@ -53,6 +53,15 @@ infoPage=function(id){if(!KstoreCloud.enabled)return connectedInfoPage(id);const
 const connectedRender=render;
 render=function(){connectedRender();if(KstoreCloud.enabled){const estimate=$('#estimate');if(estimate)estimate.textContent='Delivery fees are confirmed in your checkout quote.';const strip=$('.demo-strip');if(strip)strip.textContent='Account connected · Online payments are not available';}};
 
+const connectedSellerLanding=sellerLanding;
+sellerLanding=function(){const html=connectedSellerLanding();if(!KstoreCloud.enabled)return html;return html.replaceAll('demo payout preference','payout preference (payouts are not connected)').replace('Business verification and real payout setup require a live seller service.','Applications require approval before publication. Payout accounts are not connected.').replace('This demo uses a clearly labeled sample 5% commission to illustrate finance calculations. It is not a production pricing agreement.','Fees and settlement terms have not been configured. No payable balance is created.').replace('No. Onboarding and seller operations are simulated. Do not enter real identity documents, bank account numbers or confidential business information.','Your application is saved to your account and requires review. Do not enter identity documents or bank account numbers; payouts are not connected.');};
+const connectedSellerFinance=sellerFinance;
+sellerFinance=function(){if(!KstoreCloud.enabled)return connectedSellerFinance();return '<div class="panel"><h2>Order merchandise total</h2><strong>'+money(sellerRevenue())+'</strong><p class="muted">This is the merchandise value of non-cancelled orders, not collected payments or a payable balance.</p><p>Commissions, settlements and payouts have not been configured.</p></div>';};
+const connectedSellerOrderRow=sellerOrderRow;
+sellerOrderRow=function(order){const html=connectedSellerOrderRow(order);return KstoreCloud.enabled?html.replace('Demo delivery:','Delivery:').replace(/<button[^>]*data-seller="order-status"[^>]*data-value="(?:Delivered|Refunded)"[^>]*>[\s\S]*?<\/button>/g,''):html;};
+const connectedSellerListingEditor=sellerListingEditor;
+sellerListingEditor=function(id){connectedSellerListingEditor(id);if(!KstoreCloud.enabled)return;const status=$('#seller-product-form [name="status"]'),listing=state.seller.listings.find(l=>l.id===id);status.querySelector('[value="active"]').textContent='Publish after approval';for(const value of ['paused','archived']){const option=document.createElement('option');option.value=value;option.textContent=value[0].toUpperCase()+value.slice(1);status.append(option);}status.value=listing?.status||'draft';const note=$$('#seller-product-form p').find(p=>p.textContent.includes('Uploads are resized'));if(note)note.textContent='Photos are resized, then uploaded when you save the product.';};
+
 if(!KstoreCloud.enabled)render();else{$('#app').innerHTML='<main class="wrap">'+KstoreFirebaseUI.loading()+'</main>'}
 
 window.dispatchEvent(new Event("kstore-ui-ready"));

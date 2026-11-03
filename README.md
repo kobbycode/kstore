@@ -10,6 +10,8 @@ Twelve browser checks passed against local Auth/Firestore/Functions/Storage emul
 
 Connected mode uses backend pickup stations and quotes, and removes sample vouchers, fixed delivery fees and unsupported payment claims. The demo-flow inventory below describes the retained local-demo implementation when configuration is null; it does not describe active connected-mode behavior.
 
+Seller follow-up: twelve browser scenarios passed for resumable applications, explicit final consent, pending publication denial, private drafts, approved publication, pausing, archiving, preserving archived status during edits, and unconfigured finance states. Applications stay drafts until explicit submission with the required acknowledgments. Connected finances show order merchandise value without inventing commission rates or payable balances. Owner signup and email verification were confirmed by the user; the verification message landed in spam.
+
 ## Run locally
 
 Requires Node.js 18+.

@@ -38,7 +38,7 @@ function client(app, uid) {
   return {uid, firestore, call: async (name, data = {}) => (await httpsCallable(functions, name)(data)).data};
 }
 const fails = (operation, code) => assert.rejects(operation, e => e.code === 'functions/' + code);
-const storeInput = {shopName: 'Emulator Shop', ownerName: 'Test Seller', phone: '0240000000', address: 'Test Street 1', region: 'Greater Accra', city: 'Accra', step: 3};
+const storeInput = {shopName: 'Emulator Shop', ownerName: 'Test Seller', phone: '0240000000', address: 'Test Street 1', region: 'Greater Accra', city: 'Accra', step: 3, submit: true, guidelines: true, terms: true};
 const listingInput = {id: 'test-product', name: 'Emulator test product', sku: 'TEST-001', description: 'A synthetic product used only in emulator tests.', category: 'Phones', price: 100, images: ['https://example.test/product.png'], variants: [{name: 'Black', stock: 5}], status: 'draft'};
 const cart = {items: [{id: 'test-product', variant: 'Black', qty: 2}], delivery: 'door', addressId: 'home'};
 const checkout = async (key = 'test-checkout-key-0001', actor = buyer, input = cart) => {
@@ -72,8 +72,11 @@ test('all callables reject signed-out and unverified users', async () => {
   }
 });
 test('seller onboarding cannot approve itself; publication, SKU and ownership checks hold', async () => {
-  await seller.call('saveStore', {...storeInput, step: 2});
+  await seller.call('saveStore', {...storeInput, step: 2, submit: false});
   assert.equal((await db.doc('stores/' + seller.uid).get()).data().status, 'draft');
+  await seller.call('saveStore', {...storeInput, step: 3, submit: false});
+  assert.equal((await db.doc('stores/' + seller.uid).get()).data().status, 'draft');
+  await fails(seller.call('saveStore', {...storeInput, terms: false}), 'invalid-argument');
   await seller.call('saveStore', {...storeInput, verificationStatus: 'approved'});
   const completed = (await db.doc('stores/' + seller.uid).get()).data();
   assert.equal(completed.verificationStatus, 'pending');

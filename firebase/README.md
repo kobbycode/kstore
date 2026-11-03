@@ -25,6 +25,8 @@ The existing project's public web configuration is recorded in `web-config.json`
 
 All identity comes from Firebase Auth UID, not a form email. Existing local demo profiles, sellers and orders are not automatically imported into Firebase. Firebase mode does not fall back to local demo identity if a cloud request fails.
 
+`saveStore` distinguishes draft progress (`step` 1–3, `submit: false`) from final application submission (`submit: true` with `guidelines` and `terms` acknowledged as true or the HTML checkbox value `on`). Saving the business-details step must not submit the application. Existing submitted-store settings updates retain the store's status. Seller approval stays server-owned.
+
 ## Trusted operator setup
 
 From firebase/functions, run manage.mjs with Google Application Default Credentials belonging to the intended project operator. Do not distribute these credentials to shoppers.
