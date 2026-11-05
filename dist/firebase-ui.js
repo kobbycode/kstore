@@ -1,4 +1,5 @@
 'use strict';
+window.addEventListener('click',event=>{const button=event.target.closest('[data-action="cancel-order"]');if(!window.KstoreCloud?.enabled||!button)return;event.preventDefault();event.stopImmediatePropagation();modal('Cancel order?','<p>This cancels your order before shipment and restores the reserved stock. No pay-on-delivery payment has been collected.</p><button class="primary" data-action="confirm-cancel" data-value="'+esc(button.dataset.value)+'">Confirm cancellation</button>');},true);
 // The Firebase client module calls this bridge; null configuration preserves the existing demo.
 window.KstoreCloud={enabled:!!window.KSTORE_FIREBASE,ready:false,catalogReady:false,auth:null,quote:null,publicListings:new Map(),ownedListings:new Map(),stores:new Map(),scheduleSave(){},applyCatalog(){}};
 window.KstoreFirebaseUI={authMode:'signin',error:'',message:'',original:{home,login,summary,reviewStep,sellerOnboarding,sellerStore},
