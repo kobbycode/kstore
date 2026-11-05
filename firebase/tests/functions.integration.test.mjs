@@ -66,7 +66,7 @@ beforeEach(async () => {
 after(async () => {await Promise.all(apps.map(deleteApp)); if (server) await adminApp.deleteApp(server);});
 
 test('all callables reject signed-out and unverified users', async () => {
-  for (const name of ['saveStore', 'saveListing', 'quoteOrder', 'createOrder', 'updateFulfillment', 'cancelOrder', 'requestReturn', 'publishReview', 'requestCourierAccess', 'assignDelivery', 'updateCourierDelivery']) {
+  for (const name of ['saveStore', 'saveListing', 'quoteOrder', 'createOrder', 'updateFulfillment', 'cancelOrder', 'requestReturn', 'publishReview', 'requestCourierAccess', 'assignDelivery', 'updateCourierDelivery', 'resolveDeliveryFailure']) {
     await fails(guest.call(name), 'unauthenticated');
     await fails(unverified.call(name), 'failed-precondition');
   }
@@ -203,4 +203,49 @@ test('recipient phone is required for door delivery and revoked riders lose acce
   await db.doc('couriers/'+stranger.uid).set({active:false,status:'pending'});
   await db.doc('courierJobs/'+stranger.uid+'/jobs/example').set({recipient:{phone:'0240000000'}});
   await assert.rejects(getDoc(doc(stranger.firestore,'courierJobs',stranger.uid,'jobs','example')),e=>e.code==='permission-denied');
+});
+
+const tomorrow=()=>new Date(Date.now()+2*86400000).toISOString().slice(0,10);
+async function deliveryFixture(){await catalog();const {id}=await checkout();await seller.call('updateFulfillment',{id,status:'Packed'});for(const rider of [stranger,buyer]){await rider.call('requestCourierAccess',{name:'Test Rider',phone:'0240000001'});await db.doc('couriers/'+rider.uid).update({active:true,status:'approved'});}await seller.call('assignDelivery',{id,courierUid:stranger.uid,estimatedDate:tomorrow()});return id;}
+test('pre-pickup reassignment revokes old job contact and prevents stale updates',async()=>{
+ const id=await deliveryFixture(),input={id,courierUid:buyer.uid,expectedCourierUid:stranger.uid,reason:'Rider unavailable',estimatedDate:tomorrow()};
+ await fails(buyer.call('assignDelivery',input),'permission-denied');
+ await fails(seller.call('assignDelivery',{...input,expectedCourierUid:'stale'}),'failed-precondition');
+ await seller.call('assignDelivery',input);
+ const old=(await db.doc('courierJobs/'+stranger.uid+'/jobs/'+id).get()).data();assert.equal(old.status,'Reassigned');assert.equal(old.recipient,undefined);
+ await fails(stranger.call('updateCourierDelivery',{id,status:'Accepted'}),'permission-denied');
+ await buyer.call('updateCourierDelivery',{id,status:'Accepted'});
+ await fails(seller.call('assignDelivery',input),'failed-precondition');
+ await buyer.call('cancelOrder',{id});assert.equal((await db.doc('courierJobs/'+buyer.uid+'/jobs/'+id).get()).data().status,'Cancelled');assert.equal((await db.doc('listings/test-product').get()).data().variants[0].stock,5);
+});
+test('failed post-pickup delivery requires confirmed physical return before reassignment',async()=>{
+ const id=await deliveryFixture();for(const status of ['Accepted','Picked up','Out for delivery'])await stranger.call('updateCourierDelivery',{id,status});
+ await fails(stranger.call('updateCourierDelivery',{id,status:'Delivery failed',reason:'unvalidated'}),'invalid-argument');
+ await stranger.call('updateCourierDelivery',{id,status:'Delivery failed',reason:'Recipient unavailable'});
+ const resolve={id,expectedCourierUid:stranger.uid,action:'returned',parcelReceived:true};
+ await fails(buyer.call('resolveDeliveryFailure',resolve),'permission-denied');
+ await fails(seller.call('assignDelivery',{id,courierUid:buyer.uid,expectedCourierUid:stranger.uid,reason:'New rider needed',estimatedDate:tomorrow()}),'failed-precondition');
+ await fails(seller.call('resolveDeliveryFailure',{...resolve,parcelReceived:false}),'failed-precondition');
+ await fails(buyer.call('cancelOrder',{id}),'failed-precondition');
+ await seller.call('resolveDeliveryFailure',resolve);
+ const o=(await db.doc('orders/'+id).get()).data();assert.equal(o.status,'Packed');assert.equal(o.paymentStatus,'Due on delivery');assert.equal(o.collection,undefined);assert.equal((await db.doc('listings/test-product').get()).data().variants[0].stock,3);
+ await seller.call('assignDelivery',{id,courierUid:buyer.uid,expectedCourierUid:stranger.uid,reason:'Parcel returned; new rider arranged',estimatedDate:tomorrow()});
+ await fails(stranger.call('updateCourierDelivery',{id,status:'Out for delivery'}),'permission-denied');await buyer.call('updateCourierDelivery',{id,status:'Accepted'});
+ await buyer.call('cancelOrder',{id});assert.equal((await db.doc('listings/test-product').get()).data().variants[0].stock,5);
+});
+test('failed delivery retry retains custody, stock and unpaid state and checks rider activation',async()=>{
+ const id=await deliveryFixture();await stranger.call('updateCourierDelivery',{id,status:'Accepted'});await stranger.call('updateCourierDelivery',{id,status:'Picked up'});await stranger.call('updateCourierDelivery',{id,status:'Delivery failed',reason:'Vehicle issue'});
+ await fails(stranger.call('updateCourierDelivery',{id,status:'Delivered',cashCollected:true,receivedBy:'Test'}),'failed-precondition');
+ const retry={id,expectedCourierUid:stranger.uid,action:'retry',estimatedDate:tomorrow()};await db.doc('couriers/'+stranger.uid).update({active:false});await fails(seller.call('resolveDeliveryFailure',retry),'failed-precondition');await db.doc('couriers/'+stranger.uid).update({active:true});await seller.call('resolveDeliveryFailure',retry);
+ const o=(await db.doc('orders/'+id).get()).data();assert.equal(o.status,'Shipped');assert.equal(o.deliveryAssignment.status,'Picked up');assert.equal(o.paymentStatus,'Due on delivery');assert.equal((await db.doc('listings/test-product').get()).data().variants[0].stock,3);
+ await stranger.call('updateCourierDelivery',{id,status:'Out for delivery'});await stranger.call('updateCourierDelivery',{id,status:'Delivered',cashCollected:true,receivedBy:'Test recipient'});
+ assert.equal((await db.doc('orders/'+id).get()).data().collection.amount,215);
+ await fails(seller.call('resolveDeliveryFailure',retry),'failed-precondition');
+});
+test('competing reassignment and pickup cannot both change parcel custody',async()=>{
+ const id=await deliveryFixture();await stranger.call('updateCourierDelivery',{id,status:'Accepted'});
+ const results=await Promise.allSettled([seller.call('assignDelivery',{id,courierUid:buyer.uid,expectedCourierUid:stranger.uid,reason:'Rider availability changed',estimatedDate:tomorrow()}),stranger.call('updateCourierDelivery',{id,status:'Picked up'})]);
+ assert.equal(results.filter(x=>x.status==='fulfilled').length,1);
+ const o=(await db.doc('orders/'+id).get()).data();if(o.status==='Shipped')assert.equal(o.deliveryAssignment.courierUid,stranger.uid);else{assert.equal(o.status,'Packed');assert.equal(o.deliveryAssignment.courierUid,buyer.uid);}
+ assert.equal((await db.doc('listings/test-product').get()).data().variants[0].stock,3);
 });

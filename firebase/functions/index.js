@@ -24,3 +24,4 @@ const delivery=deliveryHandlers(db);
 export const requestCourierAccess=callable(async r=>{verified(r);return delivery.requestCourierAccess(r)});
 export const assignDelivery=callable(async r=>{verified(r);return delivery.assignDelivery(r)});
 export const updateCourierDelivery=callable(async r=>{verified(r);return delivery.updateCourierDelivery(r)});
+export const resolveDeliveryFailure=callable(async r=>{verified(r);return delivery.resolveDeliveryFailure(r)});
