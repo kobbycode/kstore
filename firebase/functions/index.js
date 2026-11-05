@@ -1,4 +1,6 @@
 import {deliveryHandlers,phone} from './delivery.js';
+import {adminHandlers} from './admin.js';
+import {getAuth} from 'firebase-admin/auth';
 import {onCall,HttpsError} from 'firebase-functions/v2/https';
 import {setGlobalOptions} from 'firebase-functions/v2';
 import {initializeApp} from 'firebase-admin/app';
@@ -25,3 +27,5 @@ export const requestCourierAccess=callable(async r=>{verified(r);return delivery
 export const assignDelivery=callable(async r=>{verified(r);return delivery.assignDelivery(r)});
 export const updateCourierDelivery=callable(async r=>{verified(r);return delivery.updateCourierDelivery(r)});
 export const resolveDeliveryFailure=callable(async r=>{verified(r);return delivery.resolveDeliveryFailure(r)});
+const administration=adminHandlers(db,getAuth());
+export const adminReviewApplication=callable(async r=>{verified(r);return administration.reviewApplication(r)});

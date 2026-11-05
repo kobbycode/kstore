@@ -66,7 +66,7 @@ beforeEach(async () => {
 after(async () => {await Promise.all(apps.map(deleteApp)); if (server) await adminApp.deleteApp(server);});
 
 test('all callables reject signed-out and unverified users', async () => {
-  for (const name of ['saveStore', 'saveListing', 'quoteOrder', 'createOrder', 'updateFulfillment', 'cancelOrder', 'requestReturn', 'publishReview', 'requestCourierAccess', 'assignDelivery', 'updateCourierDelivery', 'resolveDeliveryFailure']) {
+  for (const name of ['saveStore', 'saveListing', 'quoteOrder', 'createOrder', 'updateFulfillment', 'cancelOrder', 'requestReturn', 'publishReview', 'requestCourierAccess', 'assignDelivery', 'updateCourierDelivery', 'resolveDeliveryFailure', 'adminReviewApplication']) {
     await fails(guest.call(name), 'unauthenticated');
     await fails(unverified.call(name), 'failed-precondition');
   }
@@ -248,4 +248,18 @@ test('competing reassignment and pickup cannot both change parcel custody',async
  assert.equal(results.filter(x=>x.status==='fulfilled').length,1);
  const o=(await db.doc('orders/'+id).get()).data();if(o.status==='Shipped')assert.equal(o.deliveryAssignment.courierUid,stranger.uid);else{assert.equal(o.status,'Packed');assert.equal(o.deliveryAssignment.courierUid,buyer.uid);}
  assert.equal((await db.doc('listings/test-product').get()).data().variants[0].stock,3);
+});
+test('administrator approval checks claims, verification, submission and audit ownership',async()=>{
+ await seller.call('saveStore',{...storeInput,submit:false});
+ await stranger.call('requestCourierAccess',{name:'Test Rider',phone:'0240000001'});
+ await fails(buyer.call('adminReviewApplication',{kind:'rider',uid:stranger.uid}),'permission-denied');
+ const user=await adminAuth.getAuth(server).getUser(buyer.uid);await adminAuth.getAuth(server).setCustomUserClaims(buyer.uid,{...user.customClaims,admin:true});await getAuth(apps.find(a=>a.name==='buyer')).currentUser.getIdToken(true);
+ try{
+  await fails(buyer.call('adminReviewApplication',{kind:'seller',uid:seller.uid}),'failed-precondition');
+  await seller.call('saveStore',storeInput);await buyer.call('adminReviewApplication',{kind:'seller',uid:seller.uid});assert.equal((await db.doc('stores/'+seller.uid).get()).data().verificationStatus,'approved');assert.equal((await db.doc('publicStores/'+seller.uid).get()).data().verificationStatus,'approved');
+  await adminAuth.getAuth(server).updateUser(stranger.uid,{emailVerified:false});await fails(buyer.call('adminReviewApplication',{kind:'rider',uid:stranger.uid}),'failed-precondition');await adminAuth.getAuth(server).updateUser(stranger.uid,{emailVerified:true});
+  await buyer.call('adminReviewApplication',{kind:'rider',uid:stranger.uid});await buyer.call('adminReviewApplication',{kind:'rider',uid:stranger.uid});assert.equal((await db.doc('couriers/'+stranger.uid).get()).data().active,true);assert.equal((await db.doc('courierDirectory/'+stranger.uid).get()).data().active,true);
+  const events=await db.collection('adminAudit').get();assert.equal(events.size,2);for(const e of events.docs)assert.equal(e.data().actorUid,buyer.uid);
+  await assert.rejects(setDoc(doc(buyer.firestore,'adminAudit','forged'),{actorUid:buyer.uid}),e=>e.code==='permission-denied');
+ }finally{await adminAuth.getAuth(server).setCustomUserClaims(buyer.uid,user.customClaims||{});await getAuth(apps.find(a=>a.name==='buyer')).currentUser.getIdToken(true);}
 });
