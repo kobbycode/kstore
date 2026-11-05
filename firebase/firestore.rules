@@ -54,6 +54,17 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false;
     }
+    match /couriers/{uid} { allow read: if owns(uid) || admin(); allow write: if false; }
+    match /courierDirectory/{uid} {
+      allow read: if signedIn() && request.auth.token.email_verified == true
+        && get(/databases/$(database)/documents/stores/$(request.auth.uid)).data.verificationStatus == 'approved'
+        && resource.data.active == true;
+      allow write: if false;
+    }
+    match /courierJobs/{uid}/jobs/{id} {
+      allow read: if admin() || (owns(uid) && get(/databases/$(database)/documents/couriers/$(uid)).data.active == true);
+      allow write: if false;
+    }
     match /{document=**} { allow read, write: if false; }
   }
 }

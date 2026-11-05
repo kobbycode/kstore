@@ -29,6 +29,8 @@ All identity comes from Firebase Auth UID, not a form email. Existing local demo
 
 ## Trusted operator setup
 
+Internal courier pilot: see [COURIER_OPERATIONS.md](COURIER_OPERATIONS.md) for rider enrollment/approval, assignment, delivery recording and operating limitations. Courier delivery functions require verified identities; client code cannot approve riders. Cash collection is recorded as awaiting settlement.
+
 From firebase/functions, run manage.mjs with Google Application Default Credentials belonging to the intended project operator. Do not distribute these credentials to shoppers.
 
 - node manage.mjs approve-seller PROJECT_ID FIREBASE_UID

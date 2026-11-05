@@ -51,7 +51,7 @@ async function catalog() {
   await db.doc('stores/' + seller.uid).update({verificationStatus: 'approved'});
   await seller.call('saveListing', {...listingInput, status: 'active'});
   await db.doc('commerce/settings').set({checkoutEnabled: true, regions: ['Greater Accra'], doorFeeCents: 1500, pickupFeeCents: 500});
-  await setDoc(doc(buyer.firestore, 'accounts', buyer.uid), {cart: [], wishlist: [], followed: [], pickups: [], addresses: [{id: 'home', name: 'Test Buyer', address: 'Test Road 2', city: 'Accra', region: 'Greater Accra'}], delivery: 'door', addressId: 'home', station: '', payment: 'Pay on delivery', updatedAt: serverTimestamp()});
+  await setDoc(doc(buyer.firestore, 'accounts', buyer.uid), {cart: [], wishlist: [], followed: [], pickups: [], addresses: [{id: 'home', name: 'Test Buyer', phone: '0240000000', address: 'Test Road 2', city: 'Accra', region: 'Greater Accra'}], delivery: 'door', addressId: 'home', station: '', payment: 'Pay on delivery', updatedAt: serverTimestamp()});
 }
 before(async () => {
   server = adminApp.initializeApp({projectId}, 'integration-server');
@@ -66,7 +66,7 @@ beforeEach(async () => {
 after(async () => {await Promise.all(apps.map(deleteApp)); if (server) await adminApp.deleteApp(server);});
 
 test('all callables reject signed-out and unverified users', async () => {
-  for (const name of ['saveStore', 'saveListing', 'quoteOrder', 'createOrder', 'updateFulfillment', 'cancelOrder', 'requestReturn', 'publishReview']) {
+  for (const name of ['saveStore', 'saveListing', 'quoteOrder', 'createOrder', 'updateFulfillment', 'cancelOrder', 'requestReturn', 'publishReview', 'requestCourierAccess', 'assignDelivery', 'updateCourierDelivery']) {
     await fails(guest.call(name), 'unauthenticated');
     await fails(unverified.call(name), 'failed-precondition');
   }
@@ -101,6 +101,7 @@ test('orders are idempotent, reserve stock once and expose only the seller proje
   assert.equal(first.id, second.id);
   assert.equal((await db.doc('listings/test-product').get()).data().variants[0].stock, 3);
   assert.equal((await db.collection('orders').get()).size, 1);
+  assert.equal((await db.doc('orders/'+first.id).get()).data().recipient.phone,'0240000000');
   assert.equal((await getDoc(doc(buyer.firestore, 'orders', first.id))).data().total, 215);
   await assert.rejects(getDoc(doc(seller.firestore, 'orders', first.id)), e => e.code === 'permission-denied');
   assert.equal((await getDoc(doc(seller.firestore, 'sellerOrders', seller.uid, 'orders', first.id))).data().lines.length, 1);
@@ -164,4 +165,42 @@ test('reviews require a delivered purchase; returns belong to the buyer', async 
   await fails(stranger.call('requestReturn', {id, reason: 'Test return'}), 'permission-denied');
   await buyer.call('requestReturn', {id, reason: 'Test return'});
   assert.equal((await db.doc('sellerOrders/' + seller.uid + '/orders/' + id).get()).data().status, 'Return requested');
+});
+
+test('delivery requires approval and assigned identity; ordered progress records COD without settlement', async () => {
+  await catalog(); const {id}=await checkout();
+  await stranger.call('requestCourierAccess',{name:'Test Rider',phone:'0240000001',active:true});
+  assert.equal((await db.doc('couriers/'+stranger.uid).get()).data().active,false);
+  await seller.call('updateFulfillment',{id,status:'Packed'});
+  const estimatedDate=new Date(Date.now()+2*86400000).toISOString().slice(0,10);
+  await fails(seller.call('assignDelivery',{id,courierUid:stranger.uid,estimatedDate}),'failed-precondition');
+  await db.doc('couriers/'+stranger.uid).update({active:true,status:'approved'});
+  await fails(buyer.call('assignDelivery',{id,courierUid:stranger.uid,estimatedDate}),'permission-denied');
+  await seller.call('assignDelivery',{id,courierUid:stranger.uid,estimatedDate});
+  await assert.rejects(getDoc(doc(buyer.firestore,'courierJobs',stranger.uid,'jobs',id)),e=>e.code==='permission-denied');
+  assert.equal((await getDoc(doc(stranger.firestore,'courierJobs',stranger.uid,'jobs',id))).data().recipient.phone,'0240000000');
+  await assert.rejects(setDoc(doc(stranger.firestore,'couriers',stranger.uid),{active:true}),e=>e.code==='permission-denied');
+  await fails(seller.call('updateCourierDelivery',{id,status:'Accepted'}),'permission-denied');
+  await fails(stranger.call('updateCourierDelivery',{id,status:'Delivered',cashCollected:true,receivedBy:'Test Buyer'}),'failed-precondition');
+  for(const status of ['Accepted','Picked up','Out for delivery'])await stranger.call('updateCourierDelivery',{id,status});
+  await fails(buyer.call('cancelOrder',{id}),'failed-precondition');
+  await fails(stranger.call('updateCourierDelivery',{id,status:'Delivered',receivedBy:'Test Buyer'}),'failed-precondition');
+  await stranger.call('updateCourierDelivery',{id,status:'Delivered',cashCollected:true,receivedBy:'Test Buyer'});
+  const order=(await db.doc('orders/'+id).get()).data();assert.equal(order.status,'Delivered');assert.equal(order.paymentStatus,'Cash collected — awaiting settlement');assert.equal(order.collection.amount,215);
+  assert.equal((await db.doc('sellerOrders/'+seller.uid+'/orders/'+id).get()).data().status,'Delivered');
+});
+test('cancelling before pickup closes the rider job and restores stock', async()=>{
+  await catalog();const {id}=await checkout();await seller.call('updateFulfillment',{id,status:'Packed'});
+  await stranger.call('requestCourierAccess',{name:'Test Rider',phone:'0240000001'});await db.doc('couriers/'+stranger.uid).update({active:true,status:'approved'});
+  await seller.call('assignDelivery',{id,courierUid:stranger.uid,estimatedDate:new Date(Date.now()+2*86400000).toISOString().slice(0,10)});
+  await buyer.call('cancelOrder',{id});assert.equal((await db.doc('courierJobs/'+stranger.uid+'/jobs/'+id).get()).data().status,'Cancelled');
+  assert.equal((await db.doc('listings/test-product').get()).data().variants[0].stock,5);
+  await fails(stranger.call('updateCourierDelivery',{id,status:'Accepted'}),'failed-precondition');
+});
+test('recipient phone is required for door delivery and revoked riders lose access', async()=>{
+  await catalog();await db.doc('accounts/'+buyer.uid).update({addresses:[{id:'home',name:'Test Buyer',address:'Test Street',city:'Accra',region:'Greater Accra',phone:'invalid-phone'}]});
+  await fails(buyer.call('quoteOrder',cart),'invalid-argument');
+  await db.doc('couriers/'+stranger.uid).set({active:false,status:'pending'});
+  await db.doc('courierJobs/'+stranger.uid+'/jobs/example').set({recipient:{phone:'0240000000'}});
+  await assert.rejects(getDoc(doc(stranger.firestore,'courierJobs',stranger.uid,'jobs','example')),e=>e.code==='permission-denied');
 });

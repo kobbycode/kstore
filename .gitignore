@@ -14,5 +14,6 @@ seller-qa-results.json
 *service-account*.json
 firebase/.firebaserc
 firebase/*-debug.log
+*-debug.log
 firebase/functions/node_modules/
 firebase/node_modules/

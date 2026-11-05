@@ -71,4 +71,6 @@ The existing static demo supports one browser-local store owned by its demo prof
 
 ## Firebase integration
 
-A project-configurable Firebase Auth/Firestore/Storage/Functions foundation is prepared. See firebase/README.md for setup, permissions, operator actions, tests and current connection status. dist/firebase-config.js remains null until the intended project is supplied and its backend is deployed. This preserves the existing demo instead of presenting a disconnected login as working authentication.
+The hosted application connects to kstore-d3bb3 through Firebase Auth, Firestore, Storage and callable Functions. The earlier browser-local demo description above applies only when Firebase mode is disabled. Connected mode uses verified accounts, approved sellers and server-authoritative orders/inventory; it does not import demo data or offer simulated payouts, payments or fulfillment.
+
+The internal courier pilot adds `/#/courier`, pending rider applications, trusted operator approval, seller assignment and ordered delivery/COD collection records. See [delivery operations](firebase/COURIER_OPERATIONS.md) for requirements and limitations. Support links use the owner's supplied phone/email. Real riders, cash reconciliation and delivery operations must be arranged separately. See firebase/README.md for configuration, permissions and tests.
