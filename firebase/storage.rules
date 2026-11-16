@@ -1,0 +1,15 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /product-images/{uid}/{fileName} {
+      // Product photos are public assets; no identity/business documents belong here.
+      allow read: if true;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && request.auth.token.email_verified == true
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+    match /{path=**} { allow read, write: if false; }
+  }
+}

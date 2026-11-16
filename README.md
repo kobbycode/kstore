@@ -1,1 +1,76 @@
-# kstore
+# Kstore
+
+Responsive, dependency-free shopping storefront based on the inspected reference flows, with original Kstore branding.
+
+## Connected marketplace — 3 November 2026
+
+The frontend now uses the existing `kstore-d3bb3` Firebase project for email/password authentication, private profiles and addresses, approved catalog listings, seller applications and server-validated callable operations. Its deployed backend has eight active functions. Checkout remains disabled until separately configured by the operator; online payments, delivery confirmation, refunds, payouts and support messaging are not connected. Existing browser-local demo records are not imported.
+
+Twelve browser checks passed against local Auth/Firestore/Functions/Storage emulators, including registration, verification refresh, profile/address persistence, reset-password sign-in, sign-out and mobile layout. Twenty-five backend checks also passed. A signed-out browser check against the real project's public queries passed without creating users or orders; the catalog is currently empty. Actual verification/reset email delivery and signed-in cloud transactions still need validation with a real account.
+
+Connected mode uses backend pickup stations and quotes, and removes sample vouchers, fixed delivery fees and unsupported payment claims. The demo-flow inventory below describes the retained local-demo implementation when configuration is null; it does not describe active connected-mode behavior.
+
+Seller follow-up: twelve browser scenarios passed for resumable applications, explicit final consent, pending publication denial, private drafts, approved publication, pausing, archiving, preserving archived status during edits, and unconfigured finance states. Applications stay drafts until explicit submission with the required acknowledgments. Connected finances show order merchandise value without inventing commission rates or payable balances. Owner signup and email verification were confirmed by the user; the verification message landed in spam.
+
+Email-verification recovery refreshes account data and ID-token claims before verified seller/order actions, and refreshes unverified sessions when returning to the page. Six browser regression checks cover a verified account with an older unverified token, successful seller draft save after refresh, preserved unverified-user gating and no unsolicited email. Submitting an application does not send verification mail; the explicit verification-email control does.
+
+## Run locally
+
+Requires Node.js 18+.
+
+- Run: npm run dev
+- Open: http://127.0.0.1:4173
+- Syntax check: npm run check
+- Static production files: dist/
+
+No dependency installation or build step is required. The static files can also be served by any static host.
+
+## Implemented demo flows
+
+- Home merchandising, categories, official-store and brand filtering.
+- Search suggestions with keyboard navigation, query URL state, price/category/brand filters, sorting, pagination and empty results.
+- Product specifications, variants, unavailable options, size guide, image enlargement, seller following and purchase-linked reviews.
+- Cart addition, quantity limits, totals, removal and save-for-later.
+- Demo profile, saved items, address create/edit/default/delete, dependent region/city selection, pickup filtering and saved stations.
+- Door/pickup checkout, required destination validation, WELCOME10 voucher, invalid-code feedback, payment selection and final acknowledgment.
+- Demo order creation, details, reorder, cancellation, simulated delivery and return request.
+- Vouchers, pending reviews, sellers, inbox empty state, newsletter preferences, help/policy pages and contact-form demo feedback.
+- Responsive layouts and native dialog with focus wrapping, Escape dismissal and focus restoration.
+
+## Boundaries
+
+All application data lives in this browser's localStorage under kstore-v1. Sign-in is a demo identity form, not secure authentication. Products, availability, shipping fees, reviews and promotions are fixtures. Payment methods are selections only: no credentials are collected and no gateway is called. Orders, fulfillment, returns and refunds are simulations. Contact inquiries and newsletter confirmations are local UI feedback, not sent messages.
+
+The inbox presents an empty state; a map is not required for the functional station list. This version does not include seller administration, real inventory reservation, payment webhooks, actual shipment tracking, or operational support messaging.
+
+Before live commerce: add authenticated server persistence, ownership checks, catalog/inventory service, authoritative shipping/tax/promotion quotes, idempotent order creation, payment provider sandbox and verified webhooks, fulfillment integrations, production policies and monitoring.
+
+## Verification
+
+20 connected browser checks passed during development: variant add, quantity arithmetic, checkout sign-in, delivery gate, saved address, payment step, invalid/valid voucher, discount arithmetic, selected MTN method, acknowledgment gate, one order with empty cart, demo delivery, return request, pickup filters/persistence, unavailable sizes, dialog opening, wishlist, empty search and price sort. Local QA output is retained in qa-results.json (not deployed). A 390-pixel mobile view had matching viewport/document widths and no failed product images in the captured homepage.
+
+Images use remote Unsplash photo URLs, with Google Fonts for typography. A live catalog should replace illustrative product photos and sample specifications with licensed accurate assets.
+
+## Product gallery and logo update
+
+Product galleries have thumbnail selection, previous/next navigation and an accessible viewport-filling dialog. The viewer supports 100–400% zoom, reset, wheel zoom, double-click, drag pan, pinch zoom, mobile swipe, keyboard arrows/Home/End/+/-/0, and optional browser fullscreen. Escape closes and restores focus. Size variants remain separate from image selection and have per-variant demo stock limits.
+
+The phone and Bekia shoe use inspected reference image sets (3 and 7 photos). Other illustrative products have a full photo plus a labeled crop of that same photo; these are not claimed as different camera angles. Remote image loading has a viewer error/retry state.
+
+Generated brand asset: dist/assets/kstore-logo.png. A matching simplified vector mark is used as favicon. The logo was generated with the built-in image-generation tool. The full prompt is retained in BRAND.md.
+
+## Sell on Kstore
+
+Routes: /#/sell (seller landing), /#/seller/onboarding (guided setup), /#/seller (dashboard), products/orders/finance/learning/settings subpages, and /#/seller/store/{id} (storefront).
+
+Onboarding saves progress and activates a clearly labeled demo store after guideline acknowledgment. Sellers can create, edit, draft, publish, pause and archive products, with up to six photos (HTTPS URLs or resized uploads), unique variations, whole-number inventory and validated pricing/SKUs. Published listings appear in the same-browser catalog and search, use the product gallery, and can be purchased through demo checkout. Seller inventory is reduced after order creation and restored after buyer cancellation.
+
+Seller center shows scoped order lines, fulfillment updates (packed/shipped/simulated delivered), demo return approval, downloadable packing slips, sample finance calculations and CSV export. Mixed-cart seller fulfillment is scoped to seller lines instead of marking unrelated merchandise delivered. Store settings and seller guides are included. Sample commission is 5%, explicitly not a production fee agreement.
+
+The existing static demo supports one browser-local store owned by its demo profile email. It does not submit a real merchant application, verify documents, connect a bank account, share listings across devices, make payouts, book carriers or send messages. Those require authenticated server services and operational integrations. Uploaded product photos live in localStorage; storage limits are reported.
+
+## Firebase integration
+
+The hosted application connects to kstore-d3bb3 through Firebase Auth, Firestore, Storage and callable Functions. The earlier browser-local demo description above applies only when Firebase mode is disabled. Connected mode uses verified accounts, approved sellers and server-authoritative orders/inventory; it does not import demo data or offer simulated payouts, payments or fulfillment.
+
+The internal courier pilot adds `/#/courier`, pending rider applications, trusted operator approval, seller assignment and ordered delivery/COD collection records. See [delivery operations](firebase/COURIER_OPERATIONS.md) for requirements and limitations. Support links use the owner's supplied phone/email. Real riders, cash reconciliation and delivery operations must be arranged separately. See firebase/README.md for configuration, permissions and tests.

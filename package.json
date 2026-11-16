@@ -1,0 +1,13 @@
+{
+  "name": "kstore",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "check": "node --check dist/app.js && node --check dist/gallery.js && node --check dist/seller.js && node --check dist/firebase-ui.js && node --check dist/firebase-client.js && node --check dist/courier.js && node --check firebase/functions/index.js && node --check firebase/functions/delivery.js && node --check dist/dashboards.js && node --check firebase/functions/admin.js",
+    "test": "node --test firebase/tests/domain.test.mjs",
+    "prepare:dashboards": "node prepare-dashboard-routes.mjs"
+  }
+}
